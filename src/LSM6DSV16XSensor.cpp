@@ -46,6 +46,35 @@
  * @param i2c object of an helper class which handles the I2C peripheral
  * @param address the address of the component's instance
  */
+
+
+#ifdef PICO
+
+LSM6DSV16XSensor::LSM6DSV16XSensor(i2c_inst_t *i2c, uint8_t address) : dev_i2c(i2c), address(address) {
+        reg_ctx.write_reg = LSM6DSV16X_io_write;
+        reg_ctx.read_reg = LSM6DSV16X_io_read;
+        reg_ctx.mdelay = LSM6DSV16X_sleep;
+        reg_ctx.handle = (void *)this;
+        dev_spi = NULL;  // No SPI by default
+
+        acc_is_enabled = 0L;
+        gyro_is_enabled = 0L;
+    }
+
+    LSM6DSV16XSensor::LSM6DSV16XSensor(spi_inst_t *spi, int cs_pin, uint32_t spi_speed ) 
+        : dev_spi(spi), cs_pin(cs_pin), spi_speed(spi_speed) {
+        reg_ctx.write_reg = LSM6DSV16X_io_write;
+        reg_ctx.read_reg = LSM6DSV16X_io_read;
+        reg_ctx.mdelay = LSM6DSV16X_sleep;
+        reg_ctx.handle = (void *)this;
+        dev_i2c = NULL;  // No I2C by default
+
+        acc_is_enabled = 0L;
+        gyro_is_enabled = 0L;
+    }
+
+
+#else
 LSM6DSV16XSensor::LSM6DSV16XSensor(TwoWire *i2c, uint8_t address) : dev_i2c(i2c), address(address)
 {
   reg_ctx.write_reg = LSM6DSV16X_io_write;
@@ -72,7 +101,7 @@ LSM6DSV16XSensor::LSM6DSV16XSensor(SPIClass *spi, int cs_pin, uint32_t spi_speed
   acc_is_enabled = 0L;
   gyro_is_enabled = 0L;
 }
-
+#endif
 /**
  * @brief  Initialize the LSM6DSV16X sensor
  * @retval 0 in case of success, an error code otherwise
@@ -83,8 +112,14 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
 
   if (dev_spi) {
     // Configure CS pin
+    #ifdef PICO
+      gpio_set_dir(cs_pin, GPIO_OUT);
+      gpio_put(cs_pin,HIGH);
+    #else
     pinMode(cs_pin, OUTPUT);
     digitalWrite(cs_pin, HIGH);
+
+    #endif
   }
 
   /* Enable register address automatically incremented during a multiple byte
