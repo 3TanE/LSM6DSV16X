@@ -330,9 +330,10 @@ public:
                   uint16_t NumByteToRead) {
     if (dev_spi) {
       // SPI transaction
+      uint8_t readAdress = (RegisterAddr | 0x80);// |0x80 to enable read bit 
       gpio_put(cs_pin, 0); // CS low
-      spi_write_read_blocking(dev_spi, &RegisterAddr, pBuffer,
-                              1); // Write register address and read data
+      spi_write_blocking(dev_spi,&readAdress,1) ;
+      spi_read_blocking(dev_spi,0x00,pBuffer,NumByteToRead);
       gpio_put(cs_pin, 1);        // CS high
 
       return 0;
