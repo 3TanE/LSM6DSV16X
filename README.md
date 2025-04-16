@@ -19,7 +19,6 @@ For SPI it is then required to create a SPI interface before accessing to the se
 This sensor uses I2C or SPI to communicate.
     Create initialise spi  like this 
 
-    ```
     // Initialize SPI0/1 at the desired baud rate
     spi_init(spi0, SPI_BAUD_RATE);
     // Set GPIO pins to SPI functions
@@ -34,18 +33,18 @@ This sensor uses I2C or SPI to communicate.
     gpio_init(CS_PIN);
     gpio_set_dir(CS_PIN, GPIO_OUT);
     gpio_put(CS_PIN, 1);
-  ```
 
 I2C will follow some time 
 
 
 If u use it with a Pi Pico
 you need to add 
- build_flags = -DPICO for platform io
+
+    build_flags = -DPICO for platform io
 
  or 
 
-target_compile_definitions(<target> PRIVATE PICO)
+    target_compile_definitions(<target> PRIVATE PICO)
 
 if you use cmake
 
