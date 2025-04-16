@@ -3265,7 +3265,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_axes(int32_t *AngularRate)
     return LSM6DSV16X_ERROR;
   }
 
-  /* Calculate the data. */
+  /* Calculate the data in mdps. */
   AngularRate[0] = (int32_t)((float)((float)data_raw.i16bit[0] * sensitivity));
   AngularRate[1] = (int32_t)((float)((float)data_raw.i16bit[1] * sensitivity));
   AngularRate[2] = (int32_t)((float)((float)data_raw.i16bit[2] * sensitivity));
