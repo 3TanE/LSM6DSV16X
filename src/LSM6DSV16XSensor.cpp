@@ -134,7 +134,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
   }
 
   /* FIFO mode selection */
-  if (lsm6dsv16x_fifo_mode_set(&reg_ctx, LSM6DSV16X_STREAM_MODE) != LSM6DSV16X_OK) {
+  if (lsm6dsv16x_fifo_mode_set(&reg_ctx, LSM6DSV16X_BYPASS_MODE) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
