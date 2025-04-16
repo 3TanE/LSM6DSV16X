@@ -23,14 +23,14 @@ void setup()
   Serial.begin(115200);
   Wire.begin();
   sensor.begin();
-  sensor.Enable_X();
-  sensor.Enable_G();
+  sensor.enable_x();
+  sensor.enable_g();
 }
 
 void loop()
 {
-  sensor.Get_X_Axes(accel);
-  sensor.Get_G_Axes(angrate);
+  sensor.get_x_axes(accel);
+  sensor.get_g_axes(angrate);
 
   Serial.print("Accel-X[mg]:");
   Serial.print(accel[0]);

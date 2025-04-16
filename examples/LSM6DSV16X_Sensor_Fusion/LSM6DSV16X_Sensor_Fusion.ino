@@ -43,17 +43,17 @@ void setup()
   Wire.begin();
   // Initialize LSM6DSV16X.
   AccGyr.begin();
-  AccGyr.Enable_X();
-  AccGyr.Enable_G();
+  AccGyr.enable_x();
+  AccGyr.enable_g();
 
   // Enable Sensor Fusion
-  status |= AccGyr.Set_X_FS(4);
-  status |= AccGyr.Set_G_FS(2000);
-  status |= AccGyr.Set_X_ODR(120.0f);
-  status |= AccGyr.Set_G_ODR(120.0f);
-  status |= AccGyr.Set_SFLP_ODR(120.0f);
-  status |= AccGyr.Enable_Rotation_Vector();
-  status |= AccGyr.FIFO_Set_Mode(LSM6DSV16X_STREAM_MODE);
+  status |= AccGyr.set_x_fs(4);
+  status |= AccGyr.set_g_fs(2000);
+  status |= AccGyr.set_x_odr(120.0f);
+  status |= AccGyr.set_g_odr(120.0f);
+  status |= AccGyr.set_sflp_odr(120.0f);
+  status |= AccGyr.enable_rotation_vector();
+  status |= AccGyr.fifo_set_mode(LSM6DSV16X_STREAM_MODE);
 
   if (status != LSM6DSV16X_OK) {
     Serial.println("LSM6DSV16X Sensor failed to init/configure");
@@ -69,7 +69,7 @@ void loop()
   startTime = millis();
 
   // Check the number of samples inside FIFO
-  if (AccGyr.FIFO_Get_Num_Samples(&fifo_samples) != LSM6DSV16X_OK) {
+  if (AccGyr.fifo_get_nom_samples(&fifo_samples) != LSM6DSV16X_OK) {
     Serial.println("LSM6DSV16X Sensor failed to get number of samples inside FIFO");
     while (1);
   }
@@ -77,9 +77,9 @@ void loop()
   // Read the FIFO if there is one stored sample
   if (fifo_samples > 0) {
     for (int i = 0; i < fifo_samples; i++) {
-      AccGyr.FIFO_Get_Tag(&tag);
+      AccGyr.fifo_get_tag(&tag);
       if (tag == 0x13u) {
-        AccGyr.FIFO_Get_Rotation_Vector(&quaternions[0]);
+        AccGyr.fifo_get_rotation_vector(&quaternions[0]);
 
         // Print Quaternion data
         Serial.print("Quaternion: ");

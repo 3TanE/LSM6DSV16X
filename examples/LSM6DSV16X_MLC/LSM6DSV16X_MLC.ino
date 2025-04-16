@@ -44,8 +44,8 @@ void setup()
 
   // Initlialize components.
   sensor.begin();
-  sensor.Enable_X();
-  sensor.Enable_G();
+  sensor.enable_x();
+  sensor.enable_g();
 
   /* Feed the program to Machine Learning Core */
   /* Activity Recognition Default program */
@@ -56,7 +56,7 @@ void setup()
   Serial.println(TotalNumberOfLine);
 
   for (LineCounter = 0; LineCounter < TotalNumberOfLine; LineCounter++) {
-    if (sensor.Write_Reg(ProgramPointer[LineCounter].address, ProgramPointer[LineCounter].data)) {
+    if (sensor.write_reg(ProgramPointer[LineCounter].address, ProgramPointer[LineCounter].data)) {
       Serial.print("Error loading the Program to LSM6DSV16XSensor at line: ");
       Serial.println(LineCounter);
       while (1) {
@@ -78,7 +78,7 @@ void setup()
   /* We need to wait for a time window before having the first MLC status */
   delay(3000);
 
-  sensor.Get_MLC_Output(&mlc_out);
+  sensor.get_mlc_output(&mlc_out);
   printMLCStatus(mlc_out.mlc1_src);
 }
 
@@ -87,10 +87,10 @@ void loop()
   if (mems_event) {
     mems_event = 0;
     lsm6dsv16x_mlc_status_mainpage_t  status;
-    sensor.Get_MLC_Status(&status);
+    sensor.get_mlc_status(&status);
     if (status.is_mlc1) {
       lsm6dsv16x_mlc_out_t mlc_out;
-      sensor.Get_MLC_Output(&mlc_out);
+      sensor.get_mlc_output(&mlc_out);
       printMLCStatus(mlc_out.mlc1_src);
     }
   }

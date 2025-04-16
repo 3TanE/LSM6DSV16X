@@ -129,12 +129,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
   }
 
   /* Enable BDU */
-  if (Enable_Block_Data_Update() != LSM6DSV16X_OK) {
+  if (enable_block_data_update() != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* FIFO mode selection */
-  if (lsm6dsv16x_fifo_mode_set(&reg_ctx, LSM6DSV16X_BYPASS_MODE) != LSM6DSV16X_OK) {
+  if (lsm6dsv16x_fifo_mode_set(&reg_ctx, LSM6DSV16X_STREAM_MODE) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -147,7 +147,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
   }
 
   /* Set accelerometer full scale internal variable */
-  if (Get_X_FS(&fs) != LSM6DSV16X_OK) {
+  if (get_x_fs(&fs) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -157,7 +157,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
            :                    LSM6DSV16X_16g;
 
   /* Full scale selection. */
-  if (Set_X_FS(2) != LSM6DSV16X_OK) {
+  if (set_x_fs(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -170,7 +170,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
   }
 
   /* Set gyroscope full scale internal variable */
-  if (Get_G_FS(&fs) != LSM6DSV16X_OK) {
+  if (get_g_fs(&fs) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -182,7 +182,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
             :                       LSM6DSV16X_4000dps;
 
   /* Full scale selection. */
-  if (Set_G_FS(2000) != LSM6DSV16X_OK) {
+  if (set_g_fs(2000) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -198,11 +198,11 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::begin()
 LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::end()
 {
   /* Disable the component */
-  if (Disable_X() != LSM6DSV16X_OK) {
+  if (disbale_x() != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
-  if (Disable_G() != LSM6DSV16X_OK) {
+  if (disable_g() != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -220,7 +220,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::end()
  * @param  Id the WHO_AM_I value
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::ReadID(uint8_t *Id)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::read_whoami(uint8_t *Id)
 {
   if (lsm6dsv16x_device_id_get(&reg_ctx, Id) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -233,7 +233,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::ReadID(uint8_t *Id)
  * @brief  Enable the LSM6DSV16X accelerometer sensor
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_X()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_x()
 {
   /* Check if the component is already enabled */
   if (acc_is_enabled == 1U) {
@@ -254,7 +254,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_X()
  * @brief  Disable the LSM6DSV16X accelerometer sensor
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_X()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disbale_x()
 {
   /* Check if the component is already disabled */
   if (acc_is_enabled == 0U) {
@@ -281,7 +281,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_X()
  * @param  Sensitivity pointer
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Sensitivity(float *Sensitivity)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_sensitivity(float *Sensitivity)
 {
   lsm6dsv16x_xl_full_scale_t full_scale;
 
@@ -290,7 +290,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Sensitivity(float *Sensitivity)
     return LSM6DSV16X_ERROR;
   }
 
-  *Sensitivity = Convert_X_Sensitivity(full_scale);
+  *Sensitivity = convert_x_sensitivity(full_scale);
   if (*Sensitivity == 0.0f) {
     return LSM6DSV16X_ERROR;
   }
@@ -302,7 +302,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Sensitivity(float *Sensitivity)
  * @param  full_scale enum with type lsm6dsv16x_xl_full_scale_t to be converted
  * @retval sensitivity as float
  */
-float LSM6DSV16XSensor::Convert_X_Sensitivity(lsm6dsv16x_xl_full_scale_t full_scale)
+float LSM6DSV16XSensor::convert_x_sensitivity(lsm6dsv16x_xl_full_scale_t full_scale)
 {
   float Sensitivity = 0.0f;
   /* Store the Sensitivity based on actual full scale. */
@@ -331,7 +331,7 @@ float LSM6DSV16XSensor::Convert_X_Sensitivity(lsm6dsv16x_xl_full_scale_t full_sc
  * @param  Odr pointer where the output data rate is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_ODR(float *Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_odr(float *Odr)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_data_rate_t odr_low_level;
@@ -407,10 +407,10 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_ODR(float *Odr)
  * @param  Acceleration pointer where the values of the axes are written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Axes(int32_t *Acceleration)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_axes(int32_t *Acceleration)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
-  float sensitivity = Convert_X_Sensitivity(acc_fs);
+  float sensitivity = convert_x_sensitivity(acc_fs);
 
   /* Read raw data values. */
   if (lsm6dsv16x_acceleration_raw_get(&reg_ctx, data_raw.i16bit) != LSM6DSV16X_OK) {
@@ -435,7 +435,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Axes(int32_t *Acceleration)
  * @param  Odr the output data rate value to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR(float Odr, LSM6DSV16X_ACC_Operating_Mode_t Mode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_odr(float Odr, LSM6DSV16X_ACC_Operating_Mode_t Mode)
 {
   switch (Mode) {
     case LSM6DSV16X_ACC_HIGH_PERFORMANCE_MODE: {
@@ -512,9 +512,9 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR(float Odr, LSM6DSV16X_ACC_Op
   }
 
   if (acc_is_enabled == 1U) {
-    return Set_X_ODR_When_Enabled(Odr);
+    return set_x_odr_when_enabled(Odr);
   } else {
-    return Set_X_ODR_When_Disabled(Odr);
+    return set_x_odr_when_disabled(Odr);
   }
 }
 
@@ -523,7 +523,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR(float Odr, LSM6DSV16X_ACC_Op
  * @param  Odr the functional output data rate to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR_When_Enabled(float Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_odr_when_enabled(float Odr)
 {
   lsm6dsv16x_data_rate_t new_odr;
 
@@ -553,7 +553,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR_When_Enabled(float Odr)
  * @param  Odr the functional output data rate to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR_When_Disabled(float Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_odr_when_disabled(float Odr)
 {
   acc_odr = (Odr <=    1.875f) ? LSM6DSV16X_ODR_AT_1Hz875
             : (Odr <=    7.5f) ? LSM6DSV16X_ODR_AT_7Hz5
@@ -576,7 +576,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_ODR_When_Disabled(float Odr)
  * @param  FullScale pointer where the full scale is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_FS(int32_t *FullScale)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_fs(int32_t *FullScale)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_xl_full_scale_t fs_low_level;
@@ -616,7 +616,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_FS(int32_t *FullScale)
  * @param  FullScale the functional full scale to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_FS(int32_t FullScale)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_fs(int32_t FullScale)
 {
   lsm6dsv16x_xl_full_scale_t new_fs;
 
@@ -644,7 +644,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_FS(int32_t FullScale)
  * @param  Value pointer where the raw values of the axes are written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_AxesRaw(int16_t *Value)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_axes_raw(int16_t *Value)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
 
@@ -666,7 +666,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_AxesRaw(int16_t *Value)
  * @param  Status the status of data ready bit
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_DRDY_Status(uint8_t *Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_drdy_status(uint8_t *Status)
 {
   lsm6dsv16x_all_sources_t val;
 
@@ -683,7 +683,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_DRDY_Status(uint8_t *Status)
  * @param  Status the status of all hardware events
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Event_Status(LSM6DSV16X_Event_Status_t *Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_event_status(LSM6DSV16X_Event_Status_t *Status)
 {
   lsm6dsv16x_emb_func_status_t emb_func_status;
   lsm6dsv16x_wake_up_src_t wake_up_src;
@@ -793,7 +793,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_Event_Status(LSM6DSV16X_Event_St
  * @param  PowerMode Value of the powerMode
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_Power_Mode(uint8_t PowerMode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_power_mode(uint8_t PowerMode)
 {
   if (lsm6dsv16x_xl_mode_set(&reg_ctx, (lsm6dsv16x_xl_mode_t)PowerMode) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -808,7 +808,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_Power_Mode(uint8_t PowerMode)
  * @param  FilterMode Value of the filter Mode
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_Filter_Mode(uint8_t LowHighPassFlag, uint8_t FilterMode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_filter_mode(uint8_t LowHighPassFlag, uint8_t FilterMode)
 {
   if (LowHighPassFlag == 0) {
     /*Set accelerometer low_pass filter-mode*/
@@ -837,7 +837,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_Filter_Mode(uint8_t LowHighPassF
  * @param  enable the acceleration offset
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_X_User_Offset()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_x_user_offset()
 {
   lsm6dsv16x_ctrl9_t ctrl9;
   if (lsm6dsv16x_read_reg(&reg_ctx, LSM6DSV16X_CTRL9, (uint8_t *)&ctrl9, 1) != LSM6DSV16X_OK) {
@@ -855,7 +855,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_X_User_Offset()
  * @brief  Disable acceleration offset
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_X_User_Offset()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_x_user_offset()
 {
   lsm6dsv16x_ctrl9_t ctrl9;
   if (lsm6dsv16x_read_reg(&reg_ctx, LSM6DSV16X_CTRL9, (uint8_t *)&ctrl9, 1) != LSM6DSV16X_OK) {
@@ -876,7 +876,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_X_User_Offset()
  * @param  z the acceleration offset in the z axis to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_User_Offset(float x, float y, float z)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_x_user_offset(float x, float y, float z)
 {
   lsm6dsv16x_ctrl9_t ctrl9;
   if (lsm6dsv16x_read_reg(&reg_ctx, LSM6DSV16X_CTRL9, (uint8_t *)&ctrl9, 1) != LSM6DSV16X_OK) {
@@ -922,7 +922,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_X_User_Offset(float x, float y, fl
  * @param  IntPin interrupt pin line to be used
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_6D_Orientation(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_6d_orientation(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -930,17 +930,17 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_6D_Orientation(LSM6DSV16X_Senso
   lsm6dsv16x_functions_enable_t functions_enable;
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(480.0f) != LSM6DSV16X_OK) {
+  if (set_x_odr(480.0f) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(2) != LSM6DSV16X_OK) {
+  if (set_x_fs(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* 6D orientation enabled. */
-  if (Set_6D_Orientation_Threshold(2) != LSM6DSV16X_OK) {
+  if (set_6d_orientation_threshold(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
   /* Enable 6D orientation event on either INT1 or INT2 pin */
@@ -1001,13 +1001,13 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_6D_Orientation(LSM6DSV16X_Senso
  * @brief  Disable 6D orientation detection
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_6D_Orientation()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_6d_orientation()
 {
   lsm6dsv16x_md1_cfg_t val1;
   lsm6dsv16x_md2_cfg_t val2;
 
   /* Reset threshold */
-  if (Set_6D_Orientation_Threshold(0) != LSM6DSV16X_OK) {
+  if (set_6d_orientation_threshold(0) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1040,7 +1040,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_6D_Orientation()
  * @param  Threshold 6D Orientation detection threshold
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_6D_Orientation_Threshold(uint8_t Threshold)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_6d_orientation_threshold(uint8_t Threshold)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_6d_threshold_t newThreshold = LSM6DSV16X_DEG_80;
@@ -1080,7 +1080,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_6D_Orientation_Threshold(uint8_t T
  * @param  XLow the status of XLow orientation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_XL(uint8_t *XLow)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_6d_orientation_xl(uint8_t *XLow)
 {
   lsm6dsv16x_d6d_src_t data;
 
@@ -1098,7 +1098,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_XL(uint8_t *XLow)
  * @param  XHigh the status of XHigh orientation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_XH(uint8_t *XHigh)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_6d_orientation_xh(uint8_t *XHigh)
 {
   lsm6dsv16x_d6d_src_t data;
 
@@ -1116,7 +1116,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_XH(uint8_t *XHigh)
  * @param  YLow the status of YLow orientation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_YL(uint8_t *YLow)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_6d_orientation_yl(uint8_t *YLow)
 {
   lsm6dsv16x_d6d_src_t data;
 
@@ -1134,7 +1134,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_YL(uint8_t *YLow)
  * @param  YHigh the status of YHigh orientation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_YH(uint8_t *YHigh)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_6d_orientation_yh(uint8_t *YHigh)
 {
   lsm6dsv16x_d6d_src_t data;
 
@@ -1152,7 +1152,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_YH(uint8_t *YHigh)
  * @param  ZLow the status of ZLow orientation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_ZL(uint8_t *ZLow)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_6d_orientation_zl(uint8_t *ZLow)
 {
   lsm6dsv16x_d6d_src_t data;
 
@@ -1170,7 +1170,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_ZL(uint8_t *ZLow)
  * @param  ZHigh the status of ZHigh orientation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_ZH(uint8_t *ZHigh)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_6d_orientation_zh(uint8_t *ZHigh)
 {
   lsm6dsv16x_d6d_src_t data;
 
@@ -1189,7 +1189,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_6D_Orientation_ZH(uint8_t *ZHigh)
  * @param  IntPin interrupt pin line to be used
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Free_Fall_Detection(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_free_fall_detection(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -1197,22 +1197,22 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Free_Fall_Detection(LSM6DSV16X_
   lsm6dsv16x_functions_enable_t functions_enable;
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(480) != LSM6DSV16X_OK) {
+  if (set_x_odr(480) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(2) != LSM6DSV16X_OK) {
+  if (set_x_fs(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /*  Set free fall duration.*/
-  if (Set_Free_Fall_Duration(3) != LSM6DSV16X_OK) {
+  if (set_free_fall_duration(3) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Set free fall threshold. */
-  if (Set_Free_Fall_Threshold(3) != LSM6DSV16X_OK) {
+  if (set_free_fall_threshold(3) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1274,7 +1274,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Free_Fall_Detection(LSM6DSV16X_
  * @brief  Disable free fall detection
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Free_Fall_Detection()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_free_fall_detection()
 {
   lsm6dsv16x_md1_cfg_t val1;
   lsm6dsv16x_md2_cfg_t val2;
@@ -1301,12 +1301,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Free_Fall_Detection()
   }
 
   /* Reset free fall threshold. */
-  if (Set_Free_Fall_Threshold(0) != LSM6DSV16X_OK) {
+  if (set_free_fall_threshold(0) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Reset free fall duration */
-  if (Set_Free_Fall_Duration(0) != LSM6DSV16X_OK) {
+  if (set_free_fall_duration(0) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1318,7 +1318,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Free_Fall_Detection()
  * @param  Threshold free fall detection threshold
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Free_Fall_Threshold(uint8_t Threshold)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_free_fall_threshold(uint8_t Threshold)
 {
   lsm6dsv16x_ff_thresholds_t val;
   switch (Threshold) {
@@ -1373,7 +1373,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Free_Fall_Threshold(uint8_t Thresh
  * @param  Duration free fall detection duration
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Free_Fall_Duration(uint8_t Duration)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_free_fall_duration(uint8_t Duration)
 {
   if (lsm6dsv16x_ff_time_windows_set(&reg_ctx, Duration) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -1387,7 +1387,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Free_Fall_Duration(uint8_t Duratio
  * @param  IntPin interrupt pin line to be used
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Wake_Up_Detection(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_wake_up_detection(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -1395,22 +1395,22 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Wake_Up_Detection(LSM6DSV16X_Se
   lsm6dsv16x_functions_enable_t functions_enable;
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(480) != LSM6DSV16X_OK) {
+  if (set_x_odr(480) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(2) != LSM6DSV16X_OK) {
+  if (set_x_fs(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Set wake-up threshold */
-  if (Set_Wake_Up_Threshold(63) != LSM6DSV16X_OK) {
+  if (set_wake_up_threshold(63) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Set wake-up durantion */
-  if (Set_Wake_Up_Duration(0) != LSM6DSV16X_OK) {
+  if (set_wake_up_duration(0) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1473,7 +1473,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Wake_Up_Detection(LSM6DSV16X_Se
  * @brief  Disable wake up detection
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Wake_Up_Detection()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_wake_up_detection()
 {
   lsm6dsv16x_md1_cfg_t val1;
   lsm6dsv16x_md2_cfg_t val2;
@@ -1500,12 +1500,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Wake_Up_Detection()
   }
 
   /* Reset wake-up threshold */
-  if (Set_Wake_Up_Threshold(0) != LSM6DSV16X_OK) {
+  if (set_wake_up_threshold(0) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Reset wake-up durantion */
-  if (Set_Wake_Up_Duration(0) != LSM6DSV16X_OK) {
+  if (set_wake_up_duration(0) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1517,7 +1517,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Wake_Up_Detection()
  * @param  Threshold wake up detection threshold
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Wake_Up_Threshold(uint32_t Threshold)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_wake_up_threshold(uint32_t Threshold)
 {
   lsm6dsv16x_act_thresholds_t wake_up_ths;
 
@@ -1539,7 +1539,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Wake_Up_Threshold(uint32_t Thresho
  * @param  Duration wake up detection duration
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Wake_Up_Duration(uint8_t Duration)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_wake_up_duration(uint8_t Duration)
 {
   lsm6dsv16x_act_wkup_time_windows_t dur_t;
 
@@ -1561,7 +1561,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Wake_Up_Duration(uint8_t Duration)
  * @param  IntPin interrupt pin line to be used
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Single_Tap_Detection(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_single_tap_detection(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -1573,12 +1573,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Single_Tap_Detection(LSM6DSV16X
   lsm6dsv16x_tap_ths_6d_t tap_ths_6d;
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(480) != LSM6DSV16X_OK) {
+  if (set_x_odr(480) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(8) != LSM6DSV16X_OK) {
+  if (set_x_fs(8) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1679,7 +1679,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Single_Tap_Detection(LSM6DSV16X
  * @brief  Disable single tap detection
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Single_Tap_Detection()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_single_tap_detection()
 {
   lsm6dsv16x_md1_cfg_t val1;
   lsm6dsv16x_md2_cfg_t val2;
@@ -1751,7 +1751,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Single_Tap_Detection()
  * @param  IntPin interrupt pin line to be used
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Double_Tap_Detection(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_double_tap_detection(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -1804,12 +1804,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Double_Tap_Detection(LSM6DSV16X
   }
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(480) != LSM6DSV16X_OK) {
+  if (set_x_odr(480) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(8) != LSM6DSV16X_OK) {
+  if (set_x_fs(8) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -1871,7 +1871,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Double_Tap_Detection(LSM6DSV16X
  * @brief  Disable double tap detection
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Double_Tap_Detection()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_double_tap_detection()
 {
   lsm6dsv16x_md1_cfg_t val1;
   lsm6dsv16x_md2_cfg_t val2;
@@ -1950,7 +1950,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Double_Tap_Detection()
  * @param  Threshold tap threshold
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Threshold(uint8_t Threshold)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_tap_threshold(uint8_t Threshold)
 {
   lsm6dsv16x_tap_ths_6d_t tap_ths_6d;
 
@@ -1973,7 +1973,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Threshold(uint8_t Threshold)
  * @param  Time tap shock time
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Shock_Time(uint8_t Time)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_tap_shock_time(uint8_t Time)
 {
   lsm6dsv16x_tap_dur_t tap_dur;
 
@@ -1996,7 +1996,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Shock_Time(uint8_t Time)
  * @param  Time tap quiet time
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Quiet_Time(uint8_t Time)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_tap_quit_time(uint8_t Time)
 {
   lsm6dsv16x_tap_dur_t tap_dur;
 
@@ -2018,7 +2018,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Quiet_Time(uint8_t Time)
  * @param  Time tap duration time
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Duration_Time(uint8_t Time)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_tap_duration_time(uint8_t Time)
 {
   lsm6dsv16x_tap_dur_t tap_dur;
 
@@ -2039,7 +2039,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Tap_Duration_Time(uint8_t Time)
  * @brief  Enable pedometer
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Pedometer(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_pedometer(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   lsm6dsv16x_stpcnt_mode_t mode;
   lsm6dsv16x_md1_cfg_t val1;
@@ -2048,12 +2048,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Pedometer(LSM6DSV16X_SensorIntP
   lsm6dsv16x_emb_func_int2_t emb_func_int2;
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(30) != LSM6DSV16X_OK) {
+  if (set_x_odr(30) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(2) != LSM6DSV16X_OK) {
+  if (set_x_fs(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -2151,7 +2151,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Pedometer(LSM6DSV16X_SensorIntP
  * @brief  Disable pedometer
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Pedometer()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_pedometer()
 {
   lsm6dsv16x_md1_cfg_t val1;
   lsm6dsv16x_md2_cfg_t val2;
@@ -2237,7 +2237,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Pedometer()
  * @param  StepCount step counter
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_Step_Count(uint16_t *StepCount)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_step_count(uint16_t *StepCount)
 {
   if (lsm6dsv16x_stpcnt_steps_get(&reg_ctx, StepCount) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -2250,7 +2250,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_Step_Count(uint16_t *StepCount)
  * @brief  Enable step counter reset
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Step_Counter_Reset()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::step_count_reset()
 {
   if (lsm6dsv16x_stpcnt_rst_step_set(&reg_ctx, PROPERTY_ENABLE) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -2264,7 +2264,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Step_Counter_Reset()
  * @param  IntPin interrupt pin line to be used
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Tilt_Detection(LSM6DSV16X_SensorIntPin_t IntPin)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_tilt_detection(LSM6DSV16X_SensorIntPin_t IntPin)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -2274,12 +2274,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Tilt_Detection(LSM6DSV16X_Senso
   lsm6dsv16x_emb_func_int2_t emb_func_int2;
 
   /* Output Data Rate selection */
-  if (Set_X_ODR(30) != LSM6DSV16X_OK) {
+  if (set_x_odr(30) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   /* Full scale selection */
-  if (Set_X_FS(2) != LSM6DSV16X_OK) {
+  if (set_x_fs(2) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -2387,7 +2387,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Tilt_Detection(LSM6DSV16X_Senso
  * @brief  Disable tilt detection
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Tilt_Detection()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_tilt_detection()
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_md1_cfg_t val1;
@@ -2468,7 +2468,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Tilt_Detection()
  * @brief  Resets the fifo to an empty state
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Reset()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_reset()
 {
   if (lsm6dsv16x_fifo_mode_set(&reg_ctx, LSM6DSV16X_BYPASS_MODE) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -2486,7 +2486,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Reset()
   * @param  NumSamples number of samples
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Num_Samples(uint16_t *NumSamples)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_nom_samples(uint16_t *NumSamples)
 {
   lsm6dsv16x_fifo_status_t status;
   if (lsm6dsv16x_fifo_status_get(&reg_ctx, &status) != LSM6DSV16X_OK) {
@@ -2503,7 +2503,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Num_Samples(uint16_t *NumSamp
   * @param  Status FIFO full status
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Full_Status(uint8_t *Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_full_status(uint8_t *Status)
 {
   lsm6dsv16x_fifo_status2_t val;
 
@@ -2522,7 +2522,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Full_Status(uint8_t *Status)
   * @param  Status FIFO full interrupt on INT1 pin status
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_INT1_FIFO_Full(uint8_t Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_int1_fifo_full(uint8_t Status)
 {
   lsm6dsv16x_int1_ctrl_t reg;
 
@@ -2545,7 +2545,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_INT1_FIFO_Full(uint8_t Status
   * @param  Status FIFO full interrupt on INT1 pin status
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_INT2_FIFO_Full(uint8_t Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_int2_fifo_full(uint8_t Status)
 {
   lsm6dsv16x_int2_ctrl_t reg;
 
@@ -2568,7 +2568,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_INT2_FIFO_Full(uint8_t Status
   * @param  Watermark FIFO watermark level
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Watermark_Level(uint8_t Watermark)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_watermark_level(uint8_t Watermark)
 {
   return (LSM6DSV16XStatusTypeDef) lsm6dsv16x_fifo_watermark_set(&reg_ctx, Watermark);
 }
@@ -2579,7 +2579,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Watermark_Level(uint8_t Water
   * @param  Status FIFO stop on watermark status
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Stop_On_Fth(uint8_t Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_stop_on_fth(uint8_t Status)
 {
   return (LSM6DSV16XStatusTypeDef) lsm6dsv16x_fifo_stop_on_wtm_set(&reg_ctx, Status);
 }
@@ -2590,7 +2590,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Stop_On_Fth(uint8_t Status)
   * @param  Mode FIFO mode
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Mode(uint8_t Mode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_mode(uint8_t Mode)
 {
   lsm6dsv16x_fifo_mode_t newMode = LSM6DSV16X_BYPASS_MODE;
 
@@ -2630,7 +2630,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Mode(uint8_t Mode)
   * @param  Tag FIFO tag
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Tag(uint8_t *Tag)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_tag(uint8_t *Tag)
 {
   lsm6dsv16x_fifo_data_out_tag_t tag_local;
 
@@ -2649,7 +2649,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Tag(uint8_t *Tag)
   * @param  Data FIFO raw data array [6]
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Data(uint8_t *Data)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_data(uint8_t *Data)
 {
   return (LSM6DSV16XStatusTypeDef) lsm6dsv16x_read_reg(&reg_ctx, LSM6DSV16X_FIFO_DATA_OUT_X_L, Data, 6);
 }
@@ -2659,13 +2659,13 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Data(uint8_t *Data)
   * @param  Acceleration FIFO accelero axes [mg]
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_X_Axes(int32_t *Acceleration)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_x_axes(int32_t *Acceleration)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
-  float sensitivity = Convert_X_Sensitivity(acc_fs);
+  float sensitivity = convert_x_sensitivity(acc_fs);
   float acceleration_float[3];
 
-  if (FIFO_Get_Data(data_raw.u8bit) != LSM6DSV16X_OK) {
+  if (fifo_get_data(data_raw.u8bit) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -2690,7 +2690,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_X_Axes(int32_t *Acceleration)
   * @param  Bdr FIFO accelero BDR value
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_X_BDR(float Bdr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_x_bdr(float Bdr)
 {
   lsm6dsv16x_fifo_xl_batch_t new_bdr;
 
@@ -2717,13 +2717,13 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_X_BDR(float Bdr)
   * @param  AngularVelocity FIFO gyro axes [mDPS]
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_G_Axes(int32_t *AngularVelocity)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_g_axes(int32_t *AngularVelocity)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
-  float sensitivity = Convert_G_Sensitivity(gyro_fs);
+  float sensitivity = convert_g_sensitivity(gyro_fs);
   float angular_velocity_float[3];
 
-  if (FIFO_Get_Data(data_raw.u8bit) != LSM6DSV16X_OK) {
+  if (fifo_get_data(data_raw.u8bit) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -2747,7 +2747,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_G_Axes(int32_t *AngularVeloci
   * @param  Bdr FIFO gyro BDR value
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_G_BDR(float Bdr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_g_bdr(float Bdr)
 {
   lsm6dsv16x_fifo_gy_batch_t new_bdr;
 
@@ -2773,21 +2773,21 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_G_BDR(float Bdr)
  * @param  Status pointer for FIFO status
  * @retval 0 in case of success, an error code otherwise
 */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Status(lsm6dsv16x_fifo_status_t *Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_status(lsm6dsv16x_fifo_status_t *Status)
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_fifo_status_get(&reg_ctx, Status);
 }
 
 /**
-  * @brief  Get the Rotation Vector values
-  * @param  rvec pointer where the Rotation Vector values are written
+  * @brief  Get the Rotation vector values
+  * @param  rvec pointer where the Rotation vector values are written
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Rotation_Vector(float *rvec)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_rotation_vector(float *rvec)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
 
-  if (FIFO_Get_Data(data_raw.u8bit) != LSM6DSV16X_OK) {
+  if (fifo_get_data(data_raw.u8bit) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
   sflp2q(rvec, (uint16_t *)&data_raw.i16bit[0]);
@@ -2796,15 +2796,15 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Rotation_Vector(float *rvec)
 }
 
 /**
-  * @brief  Get the Gravity Vector values
-  * @param  gvec pointer where the Gravity Vector values are written
+  * @brief  Get the Gravity vector values
+  * @param  gvec pointer where the Gravity vector values are written
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Gravity_Vector(float *gvec)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_gravity_vector(float *gvec)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
 
-  if (FIFO_Get_Data(data_raw.u8bit) != LSM6DSV16X_OK) {
+  if (fifo_get_data(data_raw.u8bit) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -2820,11 +2820,11 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Gravity_Vector(float *gvec)
   * @param  gbias pointer where the Gravity Bias values are written
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Gyroscope_Bias(float *gbias)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_gyroscope_bias(float *gbias)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
 
-  if (FIFO_Get_Data(data_raw.u8bit) != LSM6DSV16X_OK) {
+  if (fifo_get_data(data_raw.u8bit) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -2839,7 +2839,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Gyroscope_Bias(float *gbias)
  * @brief Enable the LSM6DSV16X FIFO Timestamp
  * @retval 0 in case of success, an error code otherwise
 */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Enable_Timestamp()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_enable_timestamp()
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_timestamp_set(&reg_ctx, PROPERTY_ENABLE);
 }
@@ -2848,7 +2848,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Enable_Timestamp()
  * @brief Disable the LSM6DSV16X FIFO Timestamp
  * @retval 0 in case of success, an error code otherwise
 */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Disable_Timestamp()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_disable_timestamp()
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_timestamp_set(&reg_ctx, PROPERTY_DISABLE);
 }
@@ -2858,7 +2858,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Disable_Timestamp()
  * @param  decimation FIFO Timestamp Decimation
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Timestamp_Decimation(uint8_t decimation)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_set_timestamp_decimation(uint8_t decimation)
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_fifo_timestamp_batch_set(&reg_ctx, (lsm6dsv16x_fifo_timestamp_batch_t)decimation);
 }
@@ -2868,10 +2868,10 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Set_Timestamp_Decimation(uint8_t 
  * @param  timestamp FIFO Timestamp
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Timestamp(uint32_t *timestamp)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::fifo_get_timestamp(uint32_t *timestamp)
 {
   uint32_t raw_data[2]; //first is timestamp second is half full of meta data
-  if (FIFO_Get_Data((uint8_t *)raw_data) != LSM6DSV16X_OK) {
+  if (fifo_get_data((uint8_t *)raw_data) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
   *timestamp = raw_data[0];
@@ -2882,7 +2882,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::FIFO_Get_Timestamp(uint32_t *timestamp
  * @brief  Enable the LSM6DSV16X gyroscope sensor
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_G()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_g()
 {
   /* Check if the component is already enabled */
   if (gyro_is_enabled == 1U) {
@@ -2903,7 +2903,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_G()
  * @brief  Disable the LSM6DSV16X gyroscope sensor
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_G()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_g()
 {
   /* Check if the component is already disabled */
   if (gyro_is_enabled == 0U) {
@@ -2930,7 +2930,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_G()
  * @param  Sensitivity pointer
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_Sensitivity(float *Sensitivity)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_sensitivity(float *Sensitivity)
 {
   lsm6dsv16x_gy_full_scale_t full_scale;
 
@@ -2939,14 +2939,14 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_Sensitivity(float *Sensitivity)
     return LSM6DSV16X_ERROR;
   }
 
-  *Sensitivity = Convert_G_Sensitivity(full_scale);
+  *Sensitivity = convert_g_sensitivity(full_scale);
   if (*Sensitivity == 0.0f) {
     return LSM6DSV16X_ERROR;
   }
   return LSM6DSV16X_OK;
 }
 
-float LSM6DSV16XSensor::Convert_G_Sensitivity(lsm6dsv16x_gy_full_scale_t full_scale)
+float LSM6DSV16XSensor::convert_g_sensitivity(lsm6dsv16x_gy_full_scale_t full_scale)
 {
   float Sensitivity = 0.0f;
   /* Store the sensitivity based on actual full scale. */
@@ -2983,7 +2983,7 @@ float LSM6DSV16XSensor::Convert_G_Sensitivity(lsm6dsv16x_gy_full_scale_t full_sc
  * @param  Odr pointer where the output data rate is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_ODR(float *Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_odr(float *Odr)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_data_rate_t odr_low_level;
@@ -3056,7 +3056,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_ODR(float *Odr)
  * @param  Mode the gyroscope operating mode
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR(float Odr, LSM6DSV16X_GYRO_Operating_Mode_t Mode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_g_odr(float Odr, LSM6DSV16X_GYRO_Operating_Mode_t Mode)
 {
   switch (Mode) {
     case LSM6DSV16X_GYRO_HIGH_PERFORMANCE_MODE: {
@@ -3099,9 +3099,9 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR(float Odr, LSM6DSV16X_GYRO_O
   }
 
   if (gyro_is_enabled == 1U) {
-    return Set_G_ODR_When_Enabled(Odr);
+    return set_g_odr_when_enabled(Odr);
   } else {
-    return Set_G_ODR_When_Disabled(Odr);
+    return set_g_odr_when_disabled(Odr);
   }
 }
 
@@ -3110,7 +3110,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR(float Odr, LSM6DSV16X_GYRO_O
  * @param  Odr the functional output data rate to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR_When_Enabled(float Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_g_odr_when_enabled(float Odr)
 {
   lsm6dsv16x_data_rate_t new_odr;
 
@@ -3134,7 +3134,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR_When_Enabled(float Odr)
  * @param  Odr the functional output data rate to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR_When_Disabled(float Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_g_odr_when_disabled(float Odr)
 {
   gyro_odr = (Odr <=    7.5f) ? LSM6DSV16X_ODR_AT_7Hz5
              : (Odr <=   15.0f) ? LSM6DSV16X_ODR_AT_15Hz
@@ -3156,7 +3156,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_ODR_When_Disabled(float Odr)
  * @param  FullScale pointer where the full scale is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_FS(int32_t  *FullScale)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_fs(int32_t  *FullScale)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_gy_full_scale_t fs_low_level;
@@ -3204,7 +3204,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_FS(int32_t  *FullScale)
  * @param  FullScale the functional full scale to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_FS(int32_t FullScale)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_g_fs(int32_t FullScale)
 {
   lsm6dsv16x_gy_full_scale_t new_fs;
 
@@ -3228,7 +3228,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_FS(int32_t FullScale)
  * @param  Value pointer where the raw values of the axes are written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_AxesRaw(int16_t *Value)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_axes_raw(int16_t *Value)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
 
@@ -3250,10 +3250,10 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_AxesRaw(int16_t *Value)
  * @param  AngularRate pointer where the values of the axes are written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_Axes(int32_t *AngularRate)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_axes(int32_t *AngularRate)
 {
   lsm6dsv16x_axis3bit16_t data_raw;
-  float sensitivity = Convert_G_Sensitivity(gyro_fs);
+  float sensitivity = convert_g_sensitivity(gyro_fs);
 
   /* Read raw data values. */
   if (lsm6dsv16x_angular_rate_raw_get(&reg_ctx, data_raw.i16bit) != LSM6DSV16X_OK) {
@@ -3278,7 +3278,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_Axes(int32_t *AngularRate)
  * @param  Status the status of data ready bit
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_DRDY_Status(uint8_t *Status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_drdy_status(uint8_t *Status)
 {
   lsm6dsv16x_all_sources_t val;
 
@@ -3295,7 +3295,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_DRDY_Status(uint8_t *Status)
  * @param  PowerMode Value of the powerMode
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_Power_Mode(uint8_t PowerMode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_g_power_mode(uint8_t PowerMode)
 {
   if (lsm6dsv16x_gy_mode_set(&reg_ctx, (lsm6dsv16x_gy_mode_t)PowerMode) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -3309,7 +3309,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_Power_Mode(uint8_t PowerMode)
  * @param  FilterMode Value of the filter Mode
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_Filter_Mode(uint8_t LowHighPassFlag, uint8_t FilterMode)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_g_filter_mode(uint8_t LowHighPassFlag, uint8_t FilterMode)
 {
   if (LowHighPassFlag == 0) {
     /*Set gyroscope low_pass 1 filter-mode*/
@@ -3338,7 +3338,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_G_Filter_Mode(uint8_t LowHighPassF
  * @param  Odr pointer where the output data rate is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_Temp_ODR(float *Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_temp_odr(float *Odr)
 {
   lsm6dsv16x_fifo_ctrl4_t ctrl4;
 
@@ -3371,7 +3371,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_Temp_ODR(float *Odr)
  * @param  Odr the output data rate value to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Temp_ODR(float Odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_temp_odr(float Odr)
 {
   lsm6dsv16x_fifo_ctrl4_t ctrl4;
 
@@ -3401,7 +3401,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_Temp_ODR(float Odr)
  * @param  value pointer where the temperature value is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_Temp_Raw(int16_t *value)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_temp_odr(int16_t *value)
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_temperature_raw_get(&reg_ctx, value);
 }
@@ -3412,11 +3412,11 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_Temp_Raw(int16_t *value)
  * @param GTestType LSM6DSV16X_GY_ST_DISABLE  = 0x0, LSM6DSV16X_GY_ST_POSITIVE = 0x1, LSM6DSV16X_GY_ST_NEGATIVE = 0x2
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_IMU(uint8_t XTestType, uint8_t GTestType)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::test_imu(uint8_t XTestType, uint8_t GTestType)
 {
   uint8_t whoamI;
 
-  if (ReadID(&whoamI) != LSM6DSV16X_OK) {
+  if (read_whoami(&whoamI) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -3424,11 +3424,11 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_IMU(uint8_t XTestType, uint8_t GT
     return LSM6DSV16X_ERROR;
   }
 
-  if (Test_X_IMU(XTestType) != LSM6DSV16X_OK) {
+  if (test_x_imu(XTestType) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
-  if (Test_G_IMU(GTestType) != LSM6DSV16X_OK) {
+  if (test_g_imu(GTestType) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
   return LSM6DSV16X_OK;
@@ -3439,14 +3439,14 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_IMU(uint8_t XTestType, uint8_t GT
  * @param TestType LSM6DSV16X_XL_ST_DISABLE  = 0x0, LSM6DSV16X_XL_ST_POSITIVE = 0x1, LSM6DSV16X_XL_ST_NEGATIVE = 0x2
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_X_IMU(uint8_t TestType)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::test_x_imu(uint8_t TestType)
 {
   int16_t data_raw[3];
   float val_st_off[3];
   float val_st_on[3];
   float test_val[3];
 
-  if (Device_Reset(LSM6DSV16X_RESET_CTRL_REGS) != LSM6DSV16X_OK) {
+  if (device_reset(LSM6DSV16X_RESET_CTRL_REGS) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -3469,12 +3469,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_X_IMU(uint8_t TestType)
   memset(val_st_on, 0x00, 3 * sizeof(float));
 
   /*Ignore First Data*/
-  if (Get_X_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+  if (get_x_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   for (uint8_t i = 0; i < 5; i++) {
-    if (Get_X_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+    if (get_x_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
       return LSM6DSV16X_ERROR;
     }
 
@@ -3495,12 +3495,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_X_IMU(uint8_t TestType)
   delay(100);
 
   /*Ignore First Data*/
-  if (Get_X_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+  if (get_x_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   for (uint8_t i = 0; i < 5; i++) {
-    if (Get_X_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+    if (get_x_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
       return LSM6DSV16X_ERROR;
     }
 
@@ -3541,7 +3541,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_X_IMU(uint8_t TestType)
  * @param  Value pointer where the raw values of the axes are written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_AxesRaw_When_Aval(int16_t *Value)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_x_axes_raw_when_aval(int16_t *Value)
 {
   lsm6dsv16x_data_ready_t drdy;
   do {
@@ -3550,7 +3550,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_AxesRaw_When_Aval(int16_t *Value
     }
   } while (!drdy.drdy_xl);
 
-  if (Get_X_AxesRaw(Value) != LSM6DSV16X_OK) {
+  if (get_x_axes_raw(Value) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
   return LSM6DSV16X_OK;
@@ -3561,12 +3561,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_X_AxesRaw_When_Aval(int16_t *Value
  * @param TestType LSM6DSV16X_GY_ST_DISABLE  = 0x0, LSM6DSV16X_GY_ST_POSITIVE = 0x1, LSM6DSV16X_GY_ST_NEGATIVE = 0x2
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_G_IMU(uint8_t TestType = LSM6DSV16X_GY_ST_POSITIVE)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::test_g_imu(uint8_t TestType = LSM6DSV16X_GY_ST_POSITIVE)
 {
   int16_t data_raw[3];
   float test_val[3];
 
-  if (Device_Reset(LSM6DSV16X_RESET_CTRL_REGS) != LSM6DSV16X_OK) {
+  if (device_reset(LSM6DSV16X_RESET_CTRL_REGS) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -3589,7 +3589,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_G_IMU(uint8_t TestType = LSM6DSV1
   delay(100);
 
   /*Ignore First Data*/
-  if (Get_G_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+  if (get_g_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
@@ -3597,7 +3597,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_G_IMU(uint8_t TestType = LSM6DSV1
   float val_st_on[3] = {0};
 
   for (uint8_t i = 0; i < 5; i++) {
-    if (Get_G_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+    if (get_g_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
       return LSM6DSV16X_ERROR;
     }
 
@@ -3618,12 +3618,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_G_IMU(uint8_t TestType = LSM6DSV1
   delay(100);
 
   /*Ignore First Data*/
-  if (Get_G_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+  if (get_g_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
 
   for (uint8_t i = 0; i < 5; i++) {
-    if (Get_G_AxesRaw_When_Aval(data_raw) != LSM6DSV16X_OK) {
+    if (get_g_axes_raw_when_aval(data_raw) != LSM6DSV16X_OK) {
       return LSM6DSV16X_ERROR;
     }
 
@@ -3665,7 +3665,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Test_G_IMU(uint8_t TestType = LSM6DSV1
  * @param  Value pointer where the raw values of the axes are written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_AxesRaw_When_Aval(int16_t *Value)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_g_axes_raw_when_aval(int16_t *Value)
 {
   lsm6dsv16x_data_ready_t drdy;
   do {
@@ -3674,7 +3674,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_AxesRaw_When_Aval(int16_t *Value
     }
   } while (!drdy.drdy_gy);
 
-  if (Get_G_AxesRaw(Value) != LSM6DSV16X_OK) {
+  if (get_g_axes_raw(Value) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
   }
   return LSM6DSV16X_OK;
@@ -3684,7 +3684,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_G_AxesRaw_When_Aval(int16_t *Value
  * @brief  Enable the LSM6DSV16X QVAR feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_Enable()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::qvar_enable()
 {
   lsm6dsv16x_ctrl7_t ctrl7;
 
@@ -3706,7 +3706,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_Enable()
  * @brief  Disable the LSM6DSV16X QVAR feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_Disable()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::qvar_disable()
 {
   lsm6dsv16x_ctrl7_t ctrl7;
 
@@ -3729,7 +3729,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_Disable()
  * @param  Data pointer where the value is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_GetData(float *Data)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::qvar_get_data(float *Data)
 {
   lsm6dsv16x_axis1bit16_t data_raw;
   (void)memset(data_raw.u8bit, 0x00, sizeof(int16_t));
@@ -3747,7 +3747,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_GetData(float *Data)
  * @param  val pointer where the value is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_GetImpedance(uint16_t *val)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::qvar_get_impedance(uint16_t *val)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_ah_qvar_zin_t imp;
@@ -3781,7 +3781,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_GetImpedance(uint16_t *val)
  * @param  val impedance in MOhm (2400MOhm, 730MOhm, 300MOhm, 255MOhm)
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_SetImpedance(uint16_t val)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::qvar_set_impedance(uint16_t val)
 {
   LSM6DSV16XStatusTypeDef ret = LSM6DSV16X_OK;
   lsm6dsv16x_ah_qvar_zin_t imp;
@@ -3815,7 +3815,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_SetImpedance(uint16_t val)
  * @param  val pointer where the value is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_GetStatus(uint8_t *val)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::qvar_get_status(uint8_t *val)
 {
   lsm6dsv16x_status_reg_t status;
 
@@ -3833,7 +3833,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::QVAR_GetStatus(uint8_t *val)
  * @param  status pointer where the MLC status is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_MLC_Status(lsm6dsv16x_mlc_status_mainpage_t *status)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_mlc_status(lsm6dsv16x_mlc_status_mainpage_t *status)
 {
   if (lsm6dsv16x_read_reg(&reg_ctx, LSM6DSV16X_MLC_STATUS_MAINPAGE, (uint8_t *)status, 1) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -3847,7 +3847,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_MLC_Status(lsm6dsv16x_mlc_status_m
  * @param  output pointer where the MLC output is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_MLC_Output(lsm6dsv16x_mlc_out_t *output)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::get_mlc_output(lsm6dsv16x_mlc_out_t *output)
 {
   if (lsm6dsv16x_mlc_out_get(&reg_ctx, output) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -3857,17 +3857,17 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Get_MLC_Output(lsm6dsv16x_mlc_out_t *o
 }
 
 /**
- * @brief  Enable Rotation Vector SFLP feature
+ * @brief  Enable Rotation vector SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Rotation_Vector()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_rotation_vector()
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
 
   if (lsm6dsv16x_fifo_sflp_batch_get(&reg_ctx, &fifo_sflp)) {
     return LSM6DSV16X_ERROR;
   }
-  /* Enable Rotation Vector SFLP feature */
+  /* Enable Rotation vector SFLP feature */
   fifo_sflp.game_rotation = 1;
 
   if (lsm6dsv16x_fifo_sflp_batch_set(&reg_ctx, fifo_sflp)) {
@@ -3882,17 +3882,17 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Rotation_Vector()
 }
 
 /**
- * @brief  Disable Rotation Vector SFLP feature
+ * @brief  Disable Rotation vector SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Rotation_Vector()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_rotation_vector()
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
 
   if (lsm6dsv16x_fifo_sflp_batch_get(&reg_ctx, &fifo_sflp)) {
     return LSM6DSV16X_ERROR;
   }
-  /* Disable Rotation Vector SFLP feature */
+  /* Disable Rotation vector SFLP feature */
   fifo_sflp.game_rotation = 0;
 
   if (lsm6dsv16x_fifo_sflp_batch_set(&reg_ctx, fifo_sflp)) {
@@ -3910,17 +3910,17 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Rotation_Vector()
 }
 
 /**
- * @brief  Enable Gravity Vector SFLP feature
+ * @brief  Enable Gravity vector SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Gravity_Vector()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_gravity_vector()
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
 
   if (lsm6dsv16x_fifo_sflp_batch_get(&reg_ctx, &fifo_sflp)) {
     return LSM6DSV16X_ERROR;
   }
-  /* Enable Gravity Vector SFLP feature */
+  /* Enable Gravity vector SFLP feature */
   fifo_sflp.gravity = 1;
 
   if (lsm6dsv16x_fifo_sflp_batch_set(&reg_ctx, fifo_sflp)) {
@@ -3935,17 +3935,17 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Gravity_Vector()
 }
 
 /**
- * @brief  Disable Gravity Vector SFLP feature
+ * @brief  Disable Gravity vector SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Gravity_Vector()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_gravity_vector()
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
 
   if (lsm6dsv16x_fifo_sflp_batch_get(&reg_ctx, &fifo_sflp)) {
     return LSM6DSV16X_ERROR;
   }
-  /* Disable Gravity Vector SFLP feature */
+  /* Disable Gravity vector SFLP feature */
   fifo_sflp.gravity = 0;
 
   if (lsm6dsv16x_fifo_sflp_batch_set(&reg_ctx, fifo_sflp)) {
@@ -3966,7 +3966,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Gravity_Vector()
  * @brief  Enable Gyroscope Bias SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Gyroscope_Bias()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_gyroscope_bias()
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
 
@@ -3991,7 +3991,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Gyroscope_Bias()
  * @brief  Disable Gyroscope Bias SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Gyroscope_Bias()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_gyroscope_bias()
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
 
@@ -4017,12 +4017,12 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Gyroscope_Bias()
 
 /**
  * @brief  Bulk set SFLP feature
- * @param  GameRotation enable/disable Game Rotation Vector SFLP feature
- * @param  Gravity enable/disable Gravity Vector SFLP feature
+ * @param  GameRotation enable/disable Game Rotation vector SFLP feature
+ * @param  Gravity enable/disable Gravity vector SFLP feature
  * @param  gBias enable/disable Gyroscope Bias SFLP feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_SFLP_Batch(bool GameRotation, bool Gravity, bool gBias)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_sflp_batch(bool GameRotation, bool Gravity, bool gBias)
 {
   lsm6dsv16x_fifo_sflp_raw_t fifo_sflp;
   fifo_sflp.game_rotation = GameRotation;
@@ -4053,7 +4053,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_SFLP_Batch(bool GameRotation, bool
  * @param  Odr the output data rate value to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_SFLP_ODR(float odr)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_sflp_odr(float odr)
 {
   lsm6dsv16x_sflp_data_rate_t rate = odr <= 15    ? LSM6DSV16X_SFLP_15Hz
                                      : odr <= 30  ? LSM6DSV16X_SFLP_30Hz
@@ -4072,7 +4072,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_SFLP_ODR(float odr)
  * @param  z the gyro bias in the z axis to be set
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_SFLP_GBIAS(float x, float y, float z)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::set_sflp_gbias(float x, float y, float z)
 {
   lsm6dsv16x_sflp_gbias_t val = {0, 0, 0};
   val.gbias_x = x;
@@ -4088,7 +4088,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Set_SFLP_GBIAS(float x, float y, float
   * @brief Reset SFLP
   * @retval 0 in case of success, an error code otherwise
   */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Reset_SFLP(void)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::reset_sflp(void)
 {
   lsm6dsv16x_emb_func_init_a_t emb_func_init_a;
 
@@ -4116,7 +4116,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Reset_SFLP(void)
  * @brief  Enable the LSM6DSV16X block update feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Block_Data_Update()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_block_data_update()
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_block_data_update_set(&reg_ctx, PROPERTY_ENABLE);
 }
@@ -4125,7 +4125,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Block_Data_Update()
  * @brief  Disable the LSM6DSV16X block update feature
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Block_Data_Update()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_block_data_update()
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_block_data_update_set(&reg_ctx, PROPERTY_DISABLE);
 }
@@ -4134,7 +4134,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Block_Data_Update()
  * @brief  Enable register address automatically incremented during a multiple byte access with a serial interface.
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Auto_Increment()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::enable_auto_increment()
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_auto_increment_set(&reg_ctx, PROPERTY_ENABLE);
 }
@@ -4143,7 +4143,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Enable_Auto_Increment()
  * @brief  Disable register address automatically incremented during a multiple byte access with a serial interface.
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Auto_Increment()
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::disable_auto_increment()
 {
   return (LSM6DSV16XStatusTypeDef)lsm6dsv16x_auto_increment_set(&reg_ctx, PROPERTY_DISABLE);
 }
@@ -4153,7 +4153,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Disable_Auto_Increment()
  * @param  flags lsm6dsv16x_reset_t flags for what to reset
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Device_Reset(LSM6DSV16X_Reset_t flags)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::device_reset(LSM6DSV16X_Reset_t flags)
 {
   if (lsm6dsv16x_reset_set(&reg_ctx, (lsm6dsv16x_reset_t)flags) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -4174,7 +4174,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Device_Reset(LSM6DSV16X_Reset_t flags)
  * @param  Data pointer where the value is written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Read_Reg(uint8_t Reg, uint8_t *Data)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::read_reg(uint8_t Reg, uint8_t *Data)
 {
   if (lsm6dsv16x_read_reg(&reg_ctx, Reg, Data, 1) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;
@@ -4189,7 +4189,7 @@ LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Read_Reg(uint8_t Reg, uint8_t *Data)
  * @param  Data value to be written
  * @retval 0 in case of success, an error code otherwise
  */
-LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::Write_Reg(uint8_t Reg, uint8_t Data)
+LSM6DSV16XStatusTypeDef LSM6DSV16XSensor::write_reg(uint8_t Reg, uint8_t Data)
 {
   if (lsm6dsv16x_write_reg(&reg_ctx, Reg, &Data, 1) != LSM6DSV16X_OK) {
     return LSM6DSV16X_ERROR;

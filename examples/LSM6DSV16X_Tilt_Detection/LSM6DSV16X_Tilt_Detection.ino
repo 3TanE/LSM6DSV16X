@@ -40,10 +40,10 @@ void setup()
 
   // Initlialize components.
   LSM6DSV16X.begin();
-  LSM6DSV16X.Enable_X();
+  LSM6DSV16X.enable_x();
 
   // Enable Tilt Detection.
-  LSM6DSV16X.Enable_Tilt_Detection(LSM6DSV16X_INT1_PIN);
+  LSM6DSV16X.enable_tilt_detection(LSM6DSV16X_INT1_PIN);
 }
 
 void loop()
@@ -51,7 +51,7 @@ void loop()
   if (mems_event) {
     mems_event = 0;
     LSM6DSV16X_Event_Status_t status;
-    LSM6DSV16X.Get_X_Event_Status(&status);
+    LSM6DSV16X.get_x_event_status(&status);
 
     if (status.TiltStatus) {
       // Led blinking.

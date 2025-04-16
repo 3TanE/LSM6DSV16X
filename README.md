@@ -1,8 +1,9 @@
 # LSM6DSV16X
-Arduino library to support the LSM6DSV16X 3D accelerometer and 3D gyroscope
+Arduino/Rasberry Pi Pico library to support the LSM6DSV16X 3D accelerometer and 3D gyroscope
+!!! This Fork is not a in place replacement since i decided to opt for snake case only !!!
 
 ## API
-
+### Arduino
 This sensor uses I2C or SPI to communicate.
 For I2C it is then required to create a TwoWire interface before accessing to the sensors:  
 
@@ -14,19 +15,54 @@ For SPI it is then required to create a SPI interface before accessing to the se
     SPIClass dev_spi(SPI_MOSI, SPI_MISO, SPI_SCK);  
     dev_spi.begin();
 
+### Pico
+This sensor uses I2C or SPI to communicate.
+    Create initialise spi  like this 
+
+    ```
+    // Initialize SPI0/1 at the desired baud rate
+    spi_init(spi0, SPI_BAUD_RATE);
+    // Set GPIO pins to SPI functions
+    spi_set_format(spi0, //spi  interface
+                    8, // bits per transfer
+                    SPI_CPOL_1, //spi mode 3
+                    SPI_CPHA_1, //spi mode 3
+                    SPI_MSB_FIRST);
+    gpio_set_function(SPI_SCK_PIN, GPIO_FUNC_SPI);
+    gpio_set_function(SPI_MOSI_PIN, GPIO_FUNC_SPI);
+    gpio_set_function(SPI_MISO_PIN, GPIO_FUNC_SPI);
+    gpio_init(CS_PIN);
+    gpio_set_dir(CS_PIN, GPIO_OUT);
+    gpio_put(CS_PIN, 1);
+  ```
+
+I2C will follow some time 
+
+
+If u use it with a Pi Pico
+you need to add 
+ build_flags = -DPICO for platform io
+
+ or 
+
+target_compile_definitions(<target> PRIVATE PICO)
+
+if you use cmake
+
+### General
 An instance can be created and enabled when the I2C bus is used following the procedure below:  
 
     LSM6DSV16XSensor AccGyr(&dev_i2c);
     AccGyr.begin();
-    AccGyr.Enable_X();  
-    AccGyr.Enable_G();
+    AccGyr.enable_x();  
+    AccGyr.enable_g();
 
 An instance can be created and enabled when the SPI bus is used following the procedure below:  
 
     LSM6DSV16XSensor AccGyr(&dev_spi, CS_PIN);
     AccGyr.begin();	
-    AccGyr.Enable_X();  
-    AccGyr.Enable_G();
+    AccGyr.enable_x();  
+    AccGyr.enable_g();
 
 The access to the sensor values is done as explained below:  
 
@@ -34,8 +70,8 @@ The access to the sensor values is done as explained below:
 
     int32_t accelerometer[3];
     int32_t gyroscope[3];
-    AccGyr.Get_X_Axes(accelerometer);  
-    AccGyr.Get_G_Axes(gyroscope);
+    AccGyr.get_x_axes(accelerometer);  
+    AccGyr.get_g_axes(gyroscope);
 
 ## Examples
 

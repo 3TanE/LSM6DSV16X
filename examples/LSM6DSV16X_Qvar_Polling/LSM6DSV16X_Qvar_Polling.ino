@@ -26,11 +26,11 @@ void setup()
   AccGyr.begin();
 
   // Enable accelerometer and gyroscope.
-  AccGyr.Enable_X();
-  AccGyr.Enable_G();
+  AccGyr.enable_x();
+  AccGyr.enable_g();
 
   // Enable QVAR
-  if (AccGyr.QVAR_Enable() != 0) {
+  if (AccGyr.qvar_enable() != 0) {
     Serial.println("Error during initialization of QVAR");
     while (1);
   }
@@ -42,10 +42,10 @@ void loop()
   uint8_t qvar_status;
   float qvar_data;
   // Check if QVAR data is ready
-  AccGyr.QVAR_GetStatus(&qvar_status);
+  AccGyr.qvar_get_status(&qvar_status);
   if (qvar_status) {
     // Get QVAR data
-    AccGyr.QVAR_GetData(&qvar_data);
+    AccGyr.qvar_get_data(&qvar_data);
     Serial.println(qvar_data);
   }
 }

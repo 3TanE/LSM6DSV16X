@@ -8987,7 +8987,7 @@ int32_t lsm6dsv16x_stpcnt_period_get(lsm6dsv16x_ctx_t *ctx, uint16_t *val)
   */
 
 /**
-  * @brief  Enable SFLP Game Rotation Vector (6x).[set]
+  * @brief  Enable SFLP Game Rotation vector (6x).[set]
   *
   * @param  ctx      read / write interface definitions
   * @param  val      Enable/Disable game rotation value (0/1).
@@ -9020,7 +9020,7 @@ exit:
 }
 
 /**
-  * @brief  Enable SFLP Game Rotation Vector (6x).[get]
+  * @brief  Enable SFLP Game Rotation vector (6x).[get]
   *
   * @param  ctx      read / write interface definitions
   * @param  val      Enable/Disable game rotation value (0/1).

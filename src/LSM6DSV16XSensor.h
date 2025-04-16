@@ -40,7 +40,6 @@
 
 #ifndef __LSM6DSV16XSensor_H__
 #define __LSM6DSV16XSensor_H__
-#define PICO 1
 
 /* Includes ------------------------------------------------------------------*/
 
@@ -49,16 +48,12 @@
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "hardware/spi.h"
-#define OUTPUT GPIO_OUT
 #define HIGH 1
 #define LOW 0 
 
 static void delay(int a)
 {
-    for (int x = 0; x < a; x++)
-    {
-        asm volatile("nop");
-    }
+    sleep_ms(a);
 }
 
 #else
@@ -173,150 +168,142 @@ public:
 #endif
   LSM6DSV16XStatusTypeDef begin();
   LSM6DSV16XStatusTypeDef end();
-  LSM6DSV16XStatusTypeDef ReadID(uint8_t *Id);
+  LSM6DSV16XStatusTypeDef read_whoami(uint8_t *Id);
 
-  LSM6DSV16XStatusTypeDef Enable_X();
-  LSM6DSV16XStatusTypeDef Disable_X();
-  LSM6DSV16XStatusTypeDef Get_X_Sensitivity(float *Sensitivity);
-  LSM6DSV16XStatusTypeDef Get_X_ODR(float *Odr);
-  LSM6DSV16XStatusTypeDef Set_X_ODR(float Odr,
+  LSM6DSV16XStatusTypeDef enable_x();
+  LSM6DSV16XStatusTypeDef disbale_x();
+  LSM6DSV16XStatusTypeDef get_x_sensitivity(float *Sensitivity);
+  LSM6DSV16XStatusTypeDef get_x_odr(float *Odr);
+  LSM6DSV16XStatusTypeDef set_x_odr(float Odr,
                                     LSM6DSV16X_ACC_Operating_Mode_t Mode =
                                         LSM6DSV16X_ACC_HIGH_PERFORMANCE_MODE);
-  LSM6DSV16XStatusTypeDef Get_X_FS(int32_t *FullScale);
-  LSM6DSV16XStatusTypeDef Set_X_FS(int32_t FullScale);
-  LSM6DSV16XStatusTypeDef Get_X_AxesRaw(int16_t *Value);
-  LSM6DSV16XStatusTypeDef Get_X_Axes(int32_t *Acceleration);
-  LSM6DSV16XStatusTypeDef Get_X_DRDY_Status(uint8_t *Status);
-  LSM6DSV16XStatusTypeDef Get_X_Event_Status(LSM6DSV16X_Event_Status_t *Status);
-  LSM6DSV16XStatusTypeDef Set_X_Power_Mode(uint8_t PowerMode);
-  LSM6DSV16XStatusTypeDef Set_X_Filter_Mode(uint8_t LowHighPassFlag,
+  LSM6DSV16XStatusTypeDef get_x_fs(int32_t *FullScale);
+  LSM6DSV16XStatusTypeDef set_x_fs(int32_t FullScale);
+  LSM6DSV16XStatusTypeDef get_x_axes_raw(int16_t *Value);
+  LSM6DSV16XStatusTypeDef get_x_axes(int32_t *Acceleration);
+  LSM6DSV16XStatusTypeDef get_x_drdy_status(uint8_t *Status);
+  LSM6DSV16XStatusTypeDef get_x_event_status(LSM6DSV16X_Event_Status_t *Status);
+  LSM6DSV16XStatusTypeDef set_x_power_mode(uint8_t PowerMode);
+  LSM6DSV16XStatusTypeDef set_x_filter_mode(uint8_t LowHighPassFlag,
                                             uint8_t FilterMode);
-  LSM6DSV16XStatusTypeDef Enable_X_User_Offset();
-  LSM6DSV16XStatusTypeDef Disable_X_User_Offset();
-  LSM6DSV16XStatusTypeDef Set_X_User_Offset(float x, float y, float z);
+  LSM6DSV16XStatusTypeDef enable_x_user_offset();
+  LSM6DSV16XStatusTypeDef disable_x_user_offset();
+  LSM6DSV16XStatusTypeDef set_x_user_offset(float x, float y, float z);
 
-  LSM6DSV16XStatusTypeDef Enable_G();
-  LSM6DSV16XStatusTypeDef Disable_G();
-  LSM6DSV16XStatusTypeDef Get_G_Sensitivity(float *Sensitivity);
-  LSM6DSV16XStatusTypeDef Get_G_ODR(float *Odr);
-  LSM6DSV16XStatusTypeDef Set_G_ODR(float Odr,
+  LSM6DSV16XStatusTypeDef enable_g();
+  LSM6DSV16XStatusTypeDef disable_g();
+  LSM6DSV16XStatusTypeDef get_g_sensitivity(float *Sensitivity);
+  LSM6DSV16XStatusTypeDef get_g_odr(float *Odr);
+  LSM6DSV16XStatusTypeDef set_g_odr(float Odr,
                                     LSM6DSV16X_GYRO_Operating_Mode_t Mode =
                                         LSM6DSV16X_GYRO_HIGH_PERFORMANCE_MODE);
-  LSM6DSV16XStatusTypeDef Get_G_FS(int32_t *FullScale);
-  LSM6DSV16XStatusTypeDef Set_G_FS(int32_t FullScale);
-  LSM6DSV16XStatusTypeDef Get_G_AxesRaw(int16_t *Value);
-  LSM6DSV16XStatusTypeDef Get_G_Axes(int32_t *AngularRate);
-  LSM6DSV16XStatusTypeDef Get_G_DRDY_Status(uint8_t *Status);
-  LSM6DSV16XStatusTypeDef Set_G_Power_Mode(uint8_t PowerMode);
-  LSM6DSV16XStatusTypeDef Set_G_Filter_Mode(uint8_t LowHighPassFlag,
+  LSM6DSV16XStatusTypeDef get_g_fs(int32_t *FullScale);
+  LSM6DSV16XStatusTypeDef set_g_fs(int32_t FullScale);
+  LSM6DSV16XStatusTypeDef get_g_axes_raw(int16_t *Value);
+  LSM6DSV16XStatusTypeDef get_g_axes(int32_t *AngularRate);
+  LSM6DSV16XStatusTypeDef get_g_drdy_status(uint8_t *Status);
+  LSM6DSV16XStatusTypeDef set_g_power_mode(uint8_t PowerMode);
+  LSM6DSV16XStatusTypeDef set_g_filter_mode(uint8_t LowHighPassFlag,
                                             uint8_t FilterMode);
 
-  LSM6DSV16XStatusTypeDef Get_Temp_ODR(float *Odr);
-  LSM6DSV16XStatusTypeDef Set_Temp_ODR(float Odr);
-  LSM6DSV16XStatusTypeDef Get_Temp_Raw(int16_t *value);
+  LSM6DSV16XStatusTypeDef get_temp_odr(float *Odr);
+  LSM6DSV16XStatusTypeDef set_temp_odr(float Odr);
+  LSM6DSV16XStatusTypeDef get_temp_odr(int16_t *value);
 
-  LSM6DSV16XStatusTypeDef Test_IMU(uint8_t XTestType, uint8_t GTestType);
-  LSM6DSV16XStatusTypeDef Test_X_IMU(uint8_t TestType);
-  LSM6DSV16XStatusTypeDef Test_G_IMU(uint8_t TestType);
+  LSM6DSV16XStatusTypeDef test_imu(uint8_t XTestType, uint8_t GTestType);
+  LSM6DSV16XStatusTypeDef test_x_imu(uint8_t TestType);
+  LSM6DSV16XStatusTypeDef test_g_imu(uint8_t TestType);
 
-  LSM6DSV16XStatusTypeDef
-  Enable_6D_Orientation(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_6D_Orientation();
-  LSM6DSV16XStatusTypeDef Set_6D_Orientation_Threshold(uint8_t Threshold);
-  LSM6DSV16XStatusTypeDef Get_6D_Orientation_XL(uint8_t *XLow);
-  LSM6DSV16XStatusTypeDef Get_6D_Orientation_XH(uint8_t *XHigh);
-  LSM6DSV16XStatusTypeDef Get_6D_Orientation_YL(uint8_t *YLow);
-  LSM6DSV16XStatusTypeDef Get_6D_Orientation_YH(uint8_t *YHigh);
-  LSM6DSV16XStatusTypeDef Get_6D_Orientation_ZL(uint8_t *ZLow);
-  LSM6DSV16XStatusTypeDef Get_6D_Orientation_ZH(uint8_t *ZHigh);
+  LSM6DSV16XStatusTypeDef enable_6d_orientation(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_6d_orientation();
+  LSM6DSV16XStatusTypeDef set_6d_orientation_threshold(uint8_t Threshold);
+  LSM6DSV16XStatusTypeDef get_6d_orientation_xl(uint8_t *XLow);
+  LSM6DSV16XStatusTypeDef get_6d_orientation_xh(uint8_t *XHigh);
+  LSM6DSV16XStatusTypeDef get_6d_orientation_yl(uint8_t *YLow);
+  LSM6DSV16XStatusTypeDef get_6d_orientation_yh(uint8_t *YHigh);
+  LSM6DSV16XStatusTypeDef get_6d_orientation_zl(uint8_t *ZLow);
+  LSM6DSV16XStatusTypeDef get_6d_orientation_zh(uint8_t *ZHigh);
 
-  LSM6DSV16XStatusTypeDef
-  Enable_Free_Fall_Detection(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_Free_Fall_Detection();
-  LSM6DSV16XStatusTypeDef Set_Free_Fall_Threshold(uint8_t Threshold);
-  LSM6DSV16XStatusTypeDef Set_Free_Fall_Duration(uint8_t Duration);
+  LSM6DSV16XStatusTypeDef enable_free_fall_detection(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_free_fall_detection();
+  LSM6DSV16XStatusTypeDef set_free_fall_threshold(uint8_t Threshold);
+  LSM6DSV16XStatusTypeDef set_free_fall_duration(uint8_t Duration);
 
-  LSM6DSV16XStatusTypeDef
-  Enable_Wake_Up_Detection(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_Wake_Up_Detection();
-  LSM6DSV16XStatusTypeDef Set_Wake_Up_Threshold(uint32_t Threshold);
-  LSM6DSV16XStatusTypeDef Set_Wake_Up_Duration(uint8_t Duration);
+  LSM6DSV16XStatusTypeDef enable_wake_up_detection(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_wake_up_detection();
+  LSM6DSV16XStatusTypeDef set_wake_up_threshold(uint32_t Threshold);
+  LSM6DSV16XStatusTypeDef set_wake_up_duration(uint8_t Duration);
 
-  LSM6DSV16XStatusTypeDef
-  Enable_Single_Tap_Detection(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_Single_Tap_Detection();
-  LSM6DSV16XStatusTypeDef
-  Enable_Double_Tap_Detection(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_Double_Tap_Detection();
-  LSM6DSV16XStatusTypeDef Set_Tap_Threshold(uint8_t Threshold);
-  LSM6DSV16XStatusTypeDef Set_Tap_Shock_Time(uint8_t Time);
-  LSM6DSV16XStatusTypeDef Set_Tap_Quiet_Time(uint8_t Time);
-  LSM6DSV16XStatusTypeDef Set_Tap_Duration_Time(uint8_t Time);
+  LSM6DSV16XStatusTypeDef enable_single_tap_detection(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_single_tap_detection();
+  LSM6DSV16XStatusTypeDef enable_double_tap_detection(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_double_tap_detection();
+  LSM6DSV16XStatusTypeDef set_tap_threshold(uint8_t Threshold);
+  LSM6DSV16XStatusTypeDef set_tap_shock_time(uint8_t Time);
+  LSM6DSV16XStatusTypeDef set_tap_quit_time(uint8_t Time);
+  LSM6DSV16XStatusTypeDef set_tap_duration_time(uint8_t Time);
 
-  LSM6DSV16XStatusTypeDef Enable_Pedometer(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_Pedometer();
-  LSM6DSV16XStatusTypeDef Get_Step_Count(uint16_t *StepCount);
-  LSM6DSV16XStatusTypeDef Step_Counter_Reset();
+  LSM6DSV16XStatusTypeDef enable_pedometer(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_pedometer();
+  LSM6DSV16XStatusTypeDef get_step_count(uint16_t *StepCount);
+  LSM6DSV16XStatusTypeDef step_count_reset();
 
-  LSM6DSV16XStatusTypeDef
-  Enable_Tilt_Detection(LSM6DSV16X_SensorIntPin_t IntPin);
-  LSM6DSV16XStatusTypeDef Disable_Tilt_Detection();
+  LSM6DSV16XStatusTypeDef enable_tilt_detection(LSM6DSV16X_SensorIntPin_t IntPin);
+  LSM6DSV16XStatusTypeDef disable_tilt_detection();
 
-  LSM6DSV16XStatusTypeDef FIFO_Get_Num_Samples(uint16_t *NumSamples);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Full_Status(uint8_t *Status);
-  LSM6DSV16XStatusTypeDef FIFO_Set_INT1_FIFO_Full(uint8_t Status);
-  LSM6DSV16XStatusTypeDef FIFO_Set_INT2_FIFO_Full(uint8_t Status);
-  LSM6DSV16XStatusTypeDef FIFO_Set_Watermark_Level(uint8_t Watermark);
-  LSM6DSV16XStatusTypeDef FIFO_Set_Stop_On_Fth(uint8_t Status);
-  LSM6DSV16XStatusTypeDef FIFO_Set_Mode(uint8_t Mode);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Tag(uint8_t *Tag);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Data(uint8_t *Data);
-  LSM6DSV16XStatusTypeDef FIFO_Get_X_Axes(int32_t *Acceleration);
-  LSM6DSV16XStatusTypeDef FIFO_Set_X_BDR(float Bdr);
-  LSM6DSV16XStatusTypeDef FIFO_Get_G_Axes(int32_t *AngularVelocity);
-  LSM6DSV16XStatusTypeDef FIFO_Set_G_BDR(float Bdr);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Status(lsm6dsv16x_fifo_status_t *Status);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Rotation_Vector(float *rvec);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Gravity_Vector(float *gvec);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Gyroscope_Bias(float *gbias);
-  LSM6DSV16XStatusTypeDef FIFO_Enable_Timestamp();
-  LSM6DSV16XStatusTypeDef FIFO_Disable_Timestamp();
-  LSM6DSV16XStatusTypeDef FIFO_Set_Timestamp_Decimation(uint8_t decimation);
-  LSM6DSV16XStatusTypeDef FIFO_Get_Timestamp(uint32_t *timestamp);
-  LSM6DSV16XStatusTypeDef FIFO_Reset();
+  LSM6DSV16XStatusTypeDef fifo_get_nom_samples(uint16_t *NumSamples);
+  LSM6DSV16XStatusTypeDef fifo_get_full_status(uint8_t *Status);
+  LSM6DSV16XStatusTypeDef fifo_set_int1_fifo_full(uint8_t Status);
+  LSM6DSV16XStatusTypeDef fifo_set_int2_fifo_full(uint8_t Status);
+  LSM6DSV16XStatusTypeDef fifo_set_watermark_level(uint8_t Watermark);
+  LSM6DSV16XStatusTypeDef fifo_set_stop_on_fth(uint8_t Status);
+  LSM6DSV16XStatusTypeDef fifo_set_mode(uint8_t Mode);
+  LSM6DSV16XStatusTypeDef fifo_get_tag(uint8_t *Tag);
+  LSM6DSV16XStatusTypeDef fifo_get_data(uint8_t *Data);
+  LSM6DSV16XStatusTypeDef fifo_get_x_axes(int32_t *Acceleration);
+  LSM6DSV16XStatusTypeDef fifo_set_x_bdr(float Bdr);
+  LSM6DSV16XStatusTypeDef fifo_get_g_axes(int32_t *AngularVelocity);
+  LSM6DSV16XStatusTypeDef fifo_set_g_bdr(float Bdr);
+  LSM6DSV16XStatusTypeDef fifo_get_status(lsm6dsv16x_fifo_status_t *Status);
+  LSM6DSV16XStatusTypeDef fifo_get_rotation_vector(float *rvec);
+  LSM6DSV16XStatusTypeDef fifo_get_gravity_vector(float *gvec);
+  LSM6DSV16XStatusTypeDef fifo_get_gyroscope_bias(float *gbias);
+  LSM6DSV16XStatusTypeDef fifo_enable_timestamp();
+  LSM6DSV16XStatusTypeDef fifo_disable_timestamp();
+  LSM6DSV16XStatusTypeDef fifo_set_timestamp_decimation(uint8_t decimation);
+  LSM6DSV16XStatusTypeDef fifo_get_timestamp(uint32_t *timestamp);
+  LSM6DSV16XStatusTypeDef fifo_reset();
 
-  LSM6DSV16XStatusTypeDef QVAR_Enable();
-  LSM6DSV16XStatusTypeDef QVAR_Disable();
-  LSM6DSV16XStatusTypeDef QVAR_GetStatus(uint8_t *val);
-  LSM6DSV16XStatusTypeDef QVAR_GetImpedance(uint16_t *val);
-  LSM6DSV16XStatusTypeDef QVAR_SetImpedance(uint16_t val);
-  LSM6DSV16XStatusTypeDef QVAR_GetData(float *Data);
+  LSM6DSV16XStatusTypeDef qvar_enable();
+  LSM6DSV16XStatusTypeDef qvar_disable();
+  LSM6DSV16XStatusTypeDef qvar_get_status(uint8_t *val);
+  LSM6DSV16XStatusTypeDef qvar_get_impedance(uint16_t *val);
+  LSM6DSV16XStatusTypeDef qvar_set_impedance(uint16_t val);
+  LSM6DSV16XStatusTypeDef qvar_get_data(float *Data);
 
-  LSM6DSV16XStatusTypeDef
-  Get_MLC_Status(lsm6dsv16x_mlc_status_mainpage_t *status);
-  LSM6DSV16XStatusTypeDef Get_MLC_Output(lsm6dsv16x_mlc_out_t *output);
+  LSM6DSV16XStatusTypeDef get_mlc_status(lsm6dsv16x_mlc_status_mainpage_t *status);
+  LSM6DSV16XStatusTypeDef get_mlc_output(lsm6dsv16x_mlc_out_t *output);
 
-  LSM6DSV16XStatusTypeDef Enable_Rotation_Vector();
-  LSM6DSV16XStatusTypeDef Disable_Rotation_Vector();
-  LSM6DSV16XStatusTypeDef Enable_Gravity_Vector();
-  LSM6DSV16XStatusTypeDef Disable_Gravity_Vector();
-  LSM6DSV16XStatusTypeDef Enable_Gyroscope_Bias();
-  LSM6DSV16XStatusTypeDef Disable_Gyroscope_Bias();
-  LSM6DSV16XStatusTypeDef Set_SFLP_Batch(bool GameRotation, bool Gravity,
+  LSM6DSV16XStatusTypeDef enable_rotation_vector();
+  LSM6DSV16XStatusTypeDef disable_rotation_vector();
+  LSM6DSV16XStatusTypeDef enable_gravity_vector();
+  LSM6DSV16XStatusTypeDef disable_gravity_vector();
+  LSM6DSV16XStatusTypeDef enable_gyroscope_bias();
+  LSM6DSV16XStatusTypeDef disable_gyroscope_bias();
+  LSM6DSV16XStatusTypeDef set_sflp_batch(bool GameRotation, bool Gravity,
                                          bool gBias);
-  LSM6DSV16XStatusTypeDef Set_SFLP_ODR(float Odr);
-  LSM6DSV16XStatusTypeDef Set_SFLP_GBIAS(float x, float y, float z);
-  LSM6DSV16XStatusTypeDef Reset_SFLP();
+  LSM6DSV16XStatusTypeDef set_sflp_odr(float Odr);
+  LSM6DSV16XStatusTypeDef set_sflp_gbias(float x, float y, float z);
+  LSM6DSV16XStatusTypeDef reset_sflp();
 
-  LSM6DSV16XStatusTypeDef Read_Reg(uint8_t Reg, uint8_t *Data);
-  LSM6DSV16XStatusTypeDef Write_Reg(uint8_t Reg, uint8_t Data);
+  LSM6DSV16XStatusTypeDef read_reg(uint8_t Reg, uint8_t *Data);
+  LSM6DSV16XStatusTypeDef write_reg(uint8_t Reg, uint8_t Data);
 
-  LSM6DSV16XStatusTypeDef Enable_Block_Data_Update();
-  LSM6DSV16XStatusTypeDef Disable_Block_Data_Update();
-  LSM6DSV16XStatusTypeDef Enable_Auto_Increment();
-  LSM6DSV16XStatusTypeDef Disable_Auto_Increment();
-  LSM6DSV16XStatusTypeDef
-  Device_Reset(LSM6DSV16X_Reset_t flags = LSM6DSV16X_RESET_GLOBAL);
+  LSM6DSV16XStatusTypeDef enable_block_data_update();
+  LSM6DSV16XStatusTypeDef disable_block_data_update();
+  LSM6DSV16XStatusTypeDef enable_auto_increment();
+  LSM6DSV16XStatusTypeDef disable_auto_increment();
+  LSM6DSV16XStatusTypeDef device_reset(LSM6DSV16X_Reset_t flags = LSM6DSV16X_RESET_GLOBAL);
 
 /**
  * @brief Utility function to read data.
@@ -473,18 +460,18 @@ public:
 #endif
 
 private:
-  LSM6DSV16XStatusTypeDef Set_X_ODR_When_Enabled(float Odr);
-  LSM6DSV16XStatusTypeDef Set_X_ODR_When_Disabled(float Odr);
-  LSM6DSV16XStatusTypeDef Set_G_ODR_When_Enabled(float Odr);
-  LSM6DSV16XStatusTypeDef Set_G_ODR_When_Disabled(float Odr);
-  LSM6DSV16XStatusTypeDef Get_X_AxesRaw_When_Aval(int16_t *Value);
-  LSM6DSV16XStatusTypeDef Get_G_AxesRaw_When_Aval(int16_t *Value);
+  LSM6DSV16XStatusTypeDef set_x_odr_when_enabled(float Odr);
+  LSM6DSV16XStatusTypeDef set_x_odr_when_disabled(float Odr);
+  LSM6DSV16XStatusTypeDef set_g_odr_when_enabled(float Odr);
+  LSM6DSV16XStatusTypeDef set_g_odr_when_disabled(float Odr);
+  LSM6DSV16XStatusTypeDef get_x_axes_raw_when_aval(int16_t *Value);
+  LSM6DSV16XStatusTypeDef get_g_axes_raw_when_aval(int16_t *Value);
   LSM6DSV16XStatusTypeDef npy_halfbits_to_floatbits(uint16_t h, uint32_t *f);
   LSM6DSV16XStatusTypeDef npy_half_to_float(uint16_t h, float *f);
   LSM6DSV16XStatusTypeDef sflp2q(float quat[4], uint16_t sflp[3]);
 
-  float Convert_X_Sensitivity(lsm6dsv16x_xl_full_scale_t full_scale);
-  float Convert_G_Sensitivity(lsm6dsv16x_gy_full_scale_t full_scale);
+  float convert_x_sensitivity(lsm6dsv16x_xl_full_scale_t full_scale);
+  float convert_g_sensitivity(lsm6dsv16x_gy_full_scale_t full_scale);
 
   /* Helper classes. */
 

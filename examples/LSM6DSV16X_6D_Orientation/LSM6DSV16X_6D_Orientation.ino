@@ -42,10 +42,10 @@ void setup()
 
   // Initlialize components.
   LSM6DSV16X.begin();
-  LSM6DSV16X.Enable_X();
+  LSM6DSV16X.enable_x();
 
   // Enable 6D Orientation.
-  LSM6DSV16X.Enable_6D_Orientation(LSM6DSV16X_INT1_PIN);
+  LSM6DSV16X.enable_6d_orientation(LSM6DSV16X_INT1_PIN);
 }
 
 void loop()
@@ -53,7 +53,7 @@ void loop()
   if (mems_event) {
     mems_event = 0;
     LSM6DSV16X_Event_Status_t status;
-    LSM6DSV16X.Get_X_Event_Status(&status);
+    LSM6DSV16X.get_x_event_status(&status);
 
     if (status.D6DOrientationStatus) {
       // Send 6D Orientation
@@ -81,12 +81,12 @@ void sendOrientation()
   uint8_t zl = 0;
   uint8_t zh = 0;
 
-  LSM6DSV16X.Get_6D_Orientation_XL(&xl);
-  LSM6DSV16X.Get_6D_Orientation_XH(&xh);
-  LSM6DSV16X.Get_6D_Orientation_YL(&yl);
-  LSM6DSV16X.Get_6D_Orientation_YH(&yh);
-  LSM6DSV16X.Get_6D_Orientation_ZL(&zl);
-  LSM6DSV16X.Get_6D_Orientation_ZH(&zh);
+  LSM6DSV16X.get_6d_orientation_xl(&xl);
+  LSM6DSV16X.get_6d_orientation_xh(&xh);
+  LSM6DSV16X.get_6d_orientation_yl(&yl);
+  LSM6DSV16X.get_6d_orientation_yh(&yh);
+  LSM6DSV16X.get_6d_orientation_zl(&zl);
+  LSM6DSV16X.get_6d_orientation_zh(&zh);
 
   if (xl == 0 && yl == 0 && zl == 0 && xh == 0 && yh == 1 && zh == 0) {
     sprintf(report, "\r\n  ________________  " \

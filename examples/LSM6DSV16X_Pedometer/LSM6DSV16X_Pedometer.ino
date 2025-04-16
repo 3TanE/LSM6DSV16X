@@ -44,10 +44,10 @@ void setup()
 
   // Initlialize components.
   LSM6DSV16X.begin();
-  LSM6DSV16X.Enable_X();
+  LSM6DSV16X.enable_x();
 
   // Enable Pedometer.
-  LSM6DSV16X.Enable_Pedometer(LSM6DSV16X_INT1_PIN);
+  LSM6DSV16X.enable_pedometer(LSM6DSV16X_INT1_PIN);
 
   previous_tick = millis();
 }
@@ -57,7 +57,7 @@ void loop()
   if (mems_event) {
     mems_event = 0;
     LSM6DSV16X_Event_Status_t status;
-    LSM6DSV16X.Get_X_Event_Status(&status);
+    LSM6DSV16X.get_x_event_status(&status);
 
     if (status.StepStatus) {
       // Led blinking.
@@ -65,7 +65,7 @@ void loop()
       delay(100);
       digitalWrite(LED_BUILTIN, LOW);
 
-      LSM6DSV16X.Get_Step_Count(&step_count);
+      LSM6DSV16X.get_step_count(&step_count);
       snprintf(report, sizeof(report), "Step counter: %d", step_count);
       Serial.println(report);
     }
@@ -73,7 +73,7 @@ void loop()
   // Print the step counter in any case every 3000 ms
   uint32_t current_tick = millis();
   if ((current_tick - previous_tick) >= 3000) {
-    LSM6DSV16X.Get_Step_Count(&step_count);
+    LSM6DSV16X.get_step_count(&step_count);
     snprintf(report, sizeof(report), "Step counter: %d", step_count);
     Serial.println(report);
     previous_tick = millis();
